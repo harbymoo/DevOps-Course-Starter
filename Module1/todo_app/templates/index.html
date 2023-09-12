@@ -51,6 +51,37 @@
             </tr>
           {% endfor %}
         </table>
+        <br>
+        <br>
+        <br>
+        <table border="2">
+          <tr>
+            <th>TO DO</th>
+            <th>DOING</th>
+            <th>DONE</th>
+          </tr>
+          {% for item in card_items %}
+            <tr>
+              {% if BOARD_LIST['To_Do'] in item['ListID'] %}
+                <td> {{ item['name'] }} <br> {{ item['DESC'] }} <br> {{ item['ListID'] }}</td>
+                <td></td>
+              {% elif BOARD_LIST['Doing'] in item['ListID'] %}
+                <td></td>
+                <td> {{ item['name']  }} <br> {{ item['DESC'] }} <br> {{ item['ListID'] }}</td>
+              {% elif BOARD_LIST['Done'] in item['ListID'] %}
+                <td></td>
+                <td> {{ item['name']  }} <br> {{ item['DESC'] }} <br>  {{ item['ListID'] }}</td>
+                <td></td>
+                <td></td>
+              {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          <tr>{{ BOARD_LIST['To_Do'] }}</tr>
+        </table>
       </ul>
     </div>
   </div>
