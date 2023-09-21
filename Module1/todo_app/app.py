@@ -11,29 +11,8 @@ API_KEY = os.getenv('API_KEY')
 API_TOKEN = os.getenv('API_TOKEN')
 BOARD_NAME = os.getenv('BOARD_NAME')
 
-""" BOARD_LIST = {
-    'To_Do': '64ef5905b30edf49e85fa346', 
-    'Doing': '64ef5905b30edf49e85fa347',
-    'Done': '64ef5905b30edf49e85fa348'
-}   """
-
 trello_instance = MYTRELLO(API_KEY, API_TOKEN)
 
-
-""" @app.route('/',methods = ['POST', 'GET'])
-def old_index():
-    #items = get_items()
-    if request.method == 'POST':
-        title = request.form.get('title')
-        if title:
-            new_item = add_item(title)
-        else:
-            pass
-    
-    #items_get = get_items()
-    items = sorted(get_items(), key=lambda x: x['status'])
-    return render_template('index.html', items = items)  
-    # return redirect('/') """
 
 @app.route('/',methods = ['POST', 'GET'])
 def index():
@@ -41,21 +20,6 @@ def index():
     BOARD_LIST = trello_instance.lists_on_board()
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)  
-
-""" @app.route('/update_status', methods=['POST'])
-def update_status():
-    items = get_items()
-    item_id = int(request.form.get('item_id'))
-    new_status = request.form.get('status')
-    for item in items:
-        if item['id'] == item_id:
-            item['status'] = new_status
-            response = make_response(redirect(url_for('index')))
-            response.set_cookie(str(item_id), new_status)
-            return response
-
-    items = sorted(get_items(), key=lambda x: x['status'])
-    return render_template('index.html', items = items)  """
 
 @app.route('/trello_list', methods=['GET'])
 def cards_list():
@@ -86,19 +50,27 @@ def move_the_card():
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
 
-@app.route('/edit_the_card/<card_id>', methods=['POST', 'GET'])
-def edit_the_card(card_id):
+@app.route('/edit_the_card/<card_name>/<card_id>', methods=['POST', 'GET'])
+def edit_the_card(card_id, card_name):
 
     card = next((card for card in trello_instance.get_cards() if card['ID'] == card_id), None)
+    print(f"{card_id}")
+    for card in trello_instance.get_cards():
+        print(f"{card['ID']} - {card_id}")
+        if card_id == card['ID']:
+            print(card)
+        else:
+            print(f"---> {card_name} ->> {card_id}")
+
+    print(f"found - {card}")
 
     if request.method == 'POST':
         new_card_desc = request.form.get('card_edit_desc')
         trello_instance.modify_card(card_id, new_card_desc)
 
         return redirect(url_for('cards_list'))
-
         
-    return render_template('edit.html', card = card)
+    return render_template('edit.html', card = card, card_id = card_id, card_name = card_name)
 
 if __name__ == 'main':
     app.run(debug = True)
