@@ -53,16 +53,17 @@ def move_the_card():
 @app.route('/edit_the_card/<card_name>/<card_id>', methods=['POST', 'GET'])
 def edit_the_card(card_id, card_name):
 
-    card = next((card for card in trello_instance.get_cards() if card['ID'] == card_id), None)
-    print(f"{card_id}")
+    # card = next((card for card in trello_instance.get_cards() if card['ID'] == card_id), None)
+    # print(f"{card_id}")
     for card in trello_instance.get_cards():
         print(f"{card['ID']} - {card_id}")
         if card_id == card['ID']:
             print(card)
+            f_card = card
         else:
             print(f"---> {card_name} ->> {card_id}")
 
-    print(f"found - {card}")
+    print(f"found - {f_card}")
 
     if request.method == 'POST':
         new_card_desc = request.form.get('card_edit_desc')
@@ -70,7 +71,7 @@ def edit_the_card(card_id, card_name):
 
         return redirect(url_for('cards_list'))
         
-    return render_template('edit.html', card = card, card_id = card_id, card_name = card_name)
+    return render_template('edit.html', card = f_card, card_id = card_id, card_name = card_name)
 
 if __name__ == 'main':
     app.run(debug = True)
