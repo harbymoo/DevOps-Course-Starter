@@ -56,12 +56,9 @@ def edit_the_card(card_id, card_name):
     # card = next((card for card in trello_instance.get_cards() if card['ID'] == card_id), None)
     # print(f"{card_id}")
     for card in trello_instance.get_cards():
-        print(f"{card['ID']} - {card_id}")
         if card_id == card['ID']:
             print(card)
             f_card = card
-        else:
-            print(f"---> {card_name} ->> {card_id}")
 
     print(f"found - {f_card}")
 
@@ -72,6 +69,42 @@ def edit_the_card(card_id, card_name):
         return redirect(url_for('cards_list'))
         
     return render_template('edit.html', card = f_card, card_id = card_id, card_name = card_name)
+
+@app.route('/delete_the_card/<card_id>', methods=['POST', 'GET', 'DELETE'])
+def delete_the_card(card_id):
+    
+    for card in trello_instance.get_cards():
+        if card_id == card['ID']:
+            print(card)
+            f_card = card
+
+    if request.method == 'POST':
+        card_to_be_deleted = request.form.get('delete_id_value')
+
+        print(card_to_be_deleted)
+
+    return render_template('delete_confirm.html', card = f_card, card_id = card_id)
+
+@app.route('/confirm_delete/<delete_id_value>', methods=['POST', 'GET', 'DELETE'])
+def confirm_delete(delete_id_value):
+
+    for card in trello_instance.get_cards():
+        if delete_id_value == card['ID']:
+            print(card)
+            f_card = card
+       
+    if request.method == 'POST':
+        confirmation = request.form.get('confirmation')
+
+        print(f"answer - {confirmation}")
+
+        if confirmation == 'yes':
+            trello_instance.delete_card(delete_id_value)
+            return redirect(url_for('cards_list'))
+        else:
+            return redirect(url_for('cards_list'))
+        
+    return render_template('delete_confirm.html', card = f_card, confirmation = confirmation )
 
 if __name__ == 'main':
     app.run(debug = True)

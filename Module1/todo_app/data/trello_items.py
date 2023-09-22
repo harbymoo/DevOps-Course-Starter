@@ -104,7 +104,7 @@ class MYTRELLO():
     def modify_card(self, card_id, card_desc):
 
         base_url = "https://api.trello.com/1/cards/"
-        url = url = f"{base_url}{card_id}"
+        url = f"{base_url}{card_id}"
 
         headers = {
             "Accept": "application/json"
@@ -154,12 +154,27 @@ class MYTRELLO():
             BOARD_LIST[item['name']] = item['id']
             
         return BOARD_LIST  
-      
-if __name__ == '__main__':
+    
+    def delete_card(self, card_id):
 
-    API_KEY = os.getenv('API_KEY')
-    API_TOKEN = os.getenv('API_TOKEN')
+        base_url = "https://api.trello.com/1/cards/"
+        url = f"{base_url}{card_id}"
 
-    my_trello_instance = MYTRELLO(API_KEY,API_TOKEN)
+        headers = {
+            "Accept": "application/json"
+        }
 
-    my_trello_instance.get_cards()
+        query = {
+            "key": self.api_key,
+            "token": self.api_token
+        }
+
+        response = requests.delete(
+            url, 
+            headers=headers, 
+            params=query
+            )
+
+        card_delete = response.json()
+
+        return card_delete

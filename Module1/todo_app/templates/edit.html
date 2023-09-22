@@ -6,12 +6,60 @@
     <title>Edit Task {{ card_name }}</title>
 </head>
 <body>
-    <h1>Edit Task: {{ card_name }}</h1>
+    <h1>Edit Card: {{ card_name }} </h1>
     <form method="POST">
-        <label for="description"> Description {{ card_name }} :</label>
-        <textarea id="description" name="card_edit_desc">{{ item }}</textarea><br>
-        <br>
-        <input type="submit" value="Save">
-    </form>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <h3 class="mt-5">Edit Card
+                  <br>
+                </h3>
+              </div>
+              <div class="form-group"></div>
+              <div class="form-group">
+                <table class="table" style="display: inline-block;" border="1">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Card Name
+                        <br>
+                      </th>
+                      <th>Card Description
+                        <br>
+                      </th>
+                      <th>Due Date
+                        <br>
+                      </th>
+                      <th>Card ID
+                        <br>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>{{ card['name'] }}</td>
+                      <td>{{ card['DESC'] }}</td>
+                      <td></td>
+                      <td>{{ card['ID'] }}</td>
+                    </tr>
+                    <tr></tr>
+                    <tr></tr>
+                  </tbody>
+                </table>
+                <br><br><br>
+                <label>Card Description</label>
+                <textarea name="card_edit_desc" id="description" type="textarea" class="form-control"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <br>
+            </div>
+          </div>
+        </div>
+      </form>
+      <br>
+      <br>
+      <a href="{{ url_for('delete_the_card', card_id=card['ID']) }}" style="float: left;">Delete Card</a>
 </body>
 </html>

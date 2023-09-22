@@ -42,7 +42,7 @@
                         <form action="{{ url_for('move_the_card') }}" method="post" >
                             <input type="hidden" name="card_id_value" value="{{ item['ID'] }}">
                             <ul>
-                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card Desc</a></li>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
                               <li>{{ item['DESC'] }}</li>
                             </ul>
                             <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Doing']}}" style="float: right;">Move to Doing</button>
@@ -54,7 +54,7 @@
                         <form action="{{ url_for('move_the_card') }}" method="post" >
                             <input type="hidden" name="card_id_value" value="{{ item['ID'] }}"> 
                             <ul>
-                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card Desc</a></li>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
                               <li>{{ item['DESC'] }}</li>
                             </ul>
                             <button type="submit" name="list_id_value" value="{{ BOARD_LIST['To Do']}}" style="float: left;">Move back to To-Do</button>
@@ -67,7 +67,7 @@
                         <form action="{{ url_for('move_the_card') }}" method="post" >
                             <input type="hidden" name="card_id_value" value="{{ item['ID'] }}">
                             <ul>
-                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card Desc</a></li>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
                               <li>{{ item['DESC'] }}</li>
                             </ul>
                             <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Doing'] }}">Move BACK to Doing</button>
