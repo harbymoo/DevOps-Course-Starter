@@ -13,18 +13,21 @@ BOARD_NAME = os.getenv('BOARD_NAME')
 
 trello_instance = MYTRELLO(API_KEY, API_TOKEN)
 
+BOARD_LIST = trello_instance.lists_on_board()
+print(f">>>> {BOARD_LIST}  >> {BOARD_LIST['To Do']}")
+
 
 @app.route('/',methods = ['POST', 'GET'])
 def index():
 
-    BOARD_LIST = trello_instance.lists_on_board()
+    # BOARD_LIST = trello_instance.lists_on_board()
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)  
 
 @app.route('/trello_list', methods=['GET'])
 def cards_list():
    
-    BOARD_LIST = trello_instance.lists_on_board()
+    # BOARD_LIST = trello_instance.lists_on_board()
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)  
 
@@ -34,8 +37,8 @@ def new_card_submit():
         card_name = request.form.get("card_title")
         card_desc = request.form.get("card_description")
     
-    BOARD_LIST = trello_instance.lists_on_board()
-    trello_instance.new_card(card_name, card_desc)
+    # BOARD_LIST = trello_instance.lists_on_board()
+    trello_instance.new_card(card_name, BOARD_LIST['To Do'], card_desc)
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
 
@@ -45,7 +48,7 @@ def move_the_card():
         card_id = request.form.get("card_id_value")
         list_id = request.form.get("list_id_value")
   
-    BOARD_LIST = trello_instance.lists_on_board()
+    # BOARD_LIST = trello_instance.lists_on_board()
     trello_instance.move_cards(card_id, list_id)
     card_items = trello_instance.get_cards()
     return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)

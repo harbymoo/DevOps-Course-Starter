@@ -2,19 +2,14 @@ import json
 import requests
 import os
 
-BOARD_LIST = {
-    'To_Do': '64ef5905b30edf49e85fa346', 
-    'Doing': '64ef5905b30edf49e85fa347',
-    'Done': '64ef5905b30edf49e85fa348'
-}
 
 class MYTRELLO():
     def __init__(self, api_key, api_token):
         self.api_key = api_key
         self.api_token = api_token
-        self.boardID = '64ef5905b30edf49e85fa33f'
-    
-    def new_card(self, card_name, description="", BoardID="64ef5905b30edf49e85fa33f", ListID="64ef5905b30edf49e85fa346"):
+        self.boardID = os.getenv('BOARDID')
+ 
+    def new_card(self, card_name, ListID, description=""):
 
         card_url = "https://api.trello.com/1/cards"
 
