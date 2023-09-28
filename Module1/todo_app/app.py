@@ -12,10 +12,7 @@ API_TOKEN = os.getenv('API_TOKEN')
 BOARD_NAME = os.getenv('BOARD_NAME')
 
 trello_instance = MYTRELLO(API_KEY, API_TOKEN)
-
 BOARD_LIST = trello_instance.lists_on_board()
-print(f">>>> {BOARD_LIST}  >> {BOARD_LIST['To Do']}")
-
 
 @app.route('/',methods = ['POST', 'GET'])
 def index():
@@ -36,11 +33,15 @@ def new_card_submit():
     if request.method == "POST": 
         card_name = request.form.get("card_title")
         card_desc = request.form.get("card_description")
-    
-    # BOARD_LIST = trello_instance.lists_on_board()
-    trello_instance.new_card(card_name, BOARD_LIST['To Do'], card_desc)
-    card_items = trello_instance.get_cards()
-    return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
+        card_due_date = request.form.get("card_due_date")
+
+    if card_name: 
+        trello_instance.new_card(card_name, BOARD_LIST['To Do'], card_due_date, card_desc)
+        card_items = trello_instance.get_cards()
+        return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
+    else:
+        card_items = trello_instance.get_cards()
+        return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
 
 @app.route('/move_the_card', methods=['POST', 'GET'])
 def move_the_card():
@@ -60,10 +61,7 @@ def edit_the_card(card_id, card_name):
     # print(f"{card_id}")
     for card in trello_instance.get_cards():
         if card_id == card['ID']:
-            print(card)
             f_card = card
-
-    print(f"found - {f_card}")
 
     if request.method == 'POST':
         new_card_desc = request.form.get('card_edit_desc')

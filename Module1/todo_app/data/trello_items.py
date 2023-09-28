@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+from datetime import datetime
 
 
 class MYTRELLO():
@@ -9,7 +10,7 @@ class MYTRELLO():
         self.api_token = api_token
         self.boardID = os.getenv('BOARDID')
  
-    def new_card(self, card_name, ListID, description=""):
+    def new_card(self, card_name, ListID, card_due, description=""):
 
         card_url = "https://api.trello.com/1/cards"
 
@@ -22,6 +23,7 @@ class MYTRELLO():
             "token": self.api_token,
             "idList": ListID,
             "name": card_name,
+            "due": card_due,
             "desc": description
         }
 
@@ -63,7 +65,14 @@ class MYTRELLO():
         list_cards = []
 
         for item in the_cards:
-            temp_dict = {"name": item['name'], "DESC": item['desc'], "ID": item['id'], "ListID": item['idList']}
+            print(f"{item['due']} and {type(item['due'])}")
+            if item['due'] is not None:
+                print(f"ok {item['due']}")
+                due_temp = datetime.fromisoformat(item['due'])
+                due_date = due_temp.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                due_date = 'No Due Date Set'
+            temp_dict = {"name": item['name'], "DESC": item['desc'], "ID": item['id'], "due": due_date, "ListID": item['idList']}
             list_cards.append(temp_dict)
 
         return list_cards
