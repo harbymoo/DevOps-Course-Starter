@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, make_response, url_for
+from todo_app.data.card_items import Item
+from todo_app.data.view_model import ViewModel
 
 from todo_app.flask_config import Config
 from todo_app.data.session_items import get_items, add_item, save_item
@@ -18,8 +20,18 @@ BOARD_LIST = trello_instance.lists_on_board()
 def index():
 
     # BOARD_LIST = trello_instance.lists_on_board()
-    card_items = trello_instance.get_cards()
-    return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)  
+    dictionary_items = trello_instance.get_cards()
+
+    card_items: list[Item] = []
+
+    for dictionary in dictionary_items:
+        print(dictionary)
+        item = Item.from_list_dictionaries(dictionary)
+        card_items.append(item)
+
+    view_model = ViewModel(card_items)
+
+    return render_template('trello.html', view_model = view_model, BOARD_LIST = BOARD_LIST)  
 
 @app.route('/trello_list', methods=['GET'])
 def cards_list():
