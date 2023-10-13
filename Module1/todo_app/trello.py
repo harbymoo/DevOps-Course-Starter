@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import requests, os, json
 from todo_app.data.trello_items import *
 

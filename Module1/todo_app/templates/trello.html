@@ -41,7 +41,7 @@
             <th>DOING [ {{ BOARD_LIST['Doing']}} ]</th>
             <th>DONE [ {{ BOARD_LIST['Done']}} ]</th>
           </tr>
-          {% for item in card_items %}
+          {% for item in view_model.items %}
             <tr>
                 <td>
                     {% if BOARD_LIST['To Do'] in item['ListID'] %}
