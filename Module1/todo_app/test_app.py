@@ -44,7 +44,7 @@ def stub(url, params={}, headers=None):
     raise Exception(f'Integration test did not expect URL "{url}"')
 
 def test_flask_app_homepage(monkeypatch: pytest.MonkeyPatch, client: FlaskClient):
-    monkeypatch.setattr(requests, 'get', stub)
+    monkeypatch.setattr(requests, 'request', stub)
     # Arrange
     # Add test data
 
@@ -53,4 +53,5 @@ def test_flask_app_homepage(monkeypatch: pytest.MonkeyPatch, client: FlaskClient
     print(homepage_response)
 
     # Assert
-    assert homepage_response.status == 200
+    assert homepage_response.status_code == 200
+    assert '<title>To-Do App</title>' in homepage_response.data.decode()
