@@ -1,0 +1,136 @@
+---
+# YAML documents begin with the document separator --
+#
+# The minus in YAML indicates a list item.
+# The playbook contains a list of plays, with each play being a dictionary
+#
+
+- 
+  # Target: where our plays run and the options to run as
+  hosts: module4
+  gather_facts: False
+
+  vars_files:
+    - "secrets.yml"
+
+  vars:
+    packages:
+      - git
+      - python311
+
+    POETRY_BIN: /home/ec2-user/.local/bin/poetry
+
+  # Task: the list of tasks executed within the play
+  tasks:
+
+    # installation of packages
+    - name: package installation
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      register: yum_install_output
+      become: yes
+
+    - name: debug
+      debug:
+        msg: "{{ yum_install_output }}"
+
+    # install poetry
+    - name: installation of poetry 
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 -
+      register: poetry_install_output
+
+    - name: debug
+      debug:
+        msg: "{{ poetry_install_output }}"
+
+    - name: run command
+      shell: |
+        which poetry
+      register: which_poetry_output
+
+    - name: output which
+      debug:
+        var: which_poetry_output
+
+    # create directory
+    - name: create directory
+      file:
+        path: /opt/todoapp
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+        state: directory
+      register: dir_todoapp_output
+      become: yes
+
+    - name: dir output
+      debug:
+        msg: "{{ dir_todoapp_output }}"
+
+    # git
+    - name: Example clone of a single branch
+      git:
+        repo: https://github.com/harbymoo/DevOps-Course-Starter.git
+        dest: /opt/todoapp
+        single_branch: yes
+        version: module4
+        update: no
+      register: git_output
+
+    - name: output git clone
+      debug:
+        msg: "{{ git_output }}"
+
+    # update the poetry
+    - name: poetry update
+      shell: |
+        {{ POETRY_BIN }} install --directory=/opt/todoapp/Module1
+      register: poetry_update_output
+
+    - name: debug
+      debug: 
+        msg: "{{ poetry_update_output }}"
+
+    # create env file
+    - name: Create .env from template
+      template:
+        src: templates/env.j2
+        dest: /opt/todoapp/Module1/.env
+      register: template_output
+
+    - name: debug template
+      debug:
+        msg: "{{ template_output }}"
+
+    # copy the service file
+    - name: copy the service file
+      copy:
+        src: files/todoapp.service
+        dest: /etc/systemd/system/todoapp.service
+        mode: '0644'
+        owner: root
+        group: root
+      become: yes
+      register: service_copy_output
+
+    - name: debug service
+      debug:
+        var: service_copy_output
+
+    - name: systemd enable
+      systemd:
+        name: todoapp.service
+        state: started
+        daemon_reload: true
+      become: yes
+      register: todoapp_systemd_output
+
+    - name: debud systemd
+      debug:
+        var: todoapp_systemd_output
+
+
+# Three dots indicate the end of YAML
+...

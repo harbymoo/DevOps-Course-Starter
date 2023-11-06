@@ -1,0 +1,49 @@
+---
+# YAML documents begin with the document separator --
+#
+# The minus in YAML indicates a list item.
+# The playbook contains a list of plays, with each play being a dictionary
+#
+
+- 
+  # Target: where our plays run and the options to run as
+  hosts: module4
+  gather_facts: False
+
+  vars:
+    packages:
+      - git
+      - python311
+
+  # Task: the list of tasks executed within the play
+  tasks:
+
+    # remove poetry
+    - name: uninstall poetry
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 - --uninstall
+      ignore_errors: true
+      register: poetry_install_output
+    
+    # remove the created directory
+    - name: remove directory
+      file:
+        path: /opt/todoapp
+        state: absent
+      register: dir_todoapp_output
+      become: yes
+
+    # uninstall packages
+    - name: package uninstall
+      yum:
+        name: "{{ packages }}"
+        state: absent
+      register: yum_install_output
+      become: yes
+
+    - name: debug
+      debug:
+        msg: "{{ yum_install_output }}"
+
+# Three dots indicate the end of YAML
+...
