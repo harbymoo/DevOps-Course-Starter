@@ -1,9 +1,6 @@
-import requests
 from dotenv import load_dotenv
-import os
-import json
+import requests, os, json
 from todo_app.data.trello_items import *
-
 
 load_dotenv()
 
@@ -41,7 +38,6 @@ cards = response.json()
 
 for item in cards:
     print(f"Name: {item['name']} ID: {item['id']} ListID: {item['idList']}")
-
   
 list_cards = []
 

@@ -62,3 +62,21 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Testing
+pytest>=7.4.2 required
+
+files - 
+
+todo_app:
+
+    - test_app.py
+    - test_view_model.py
+    - .env.test
+
+
+Use the following to run specific test: e.g. 
+
+```powershell
+$ poetry.exe run pytest -s  .\todo_app\test_app.py
+```

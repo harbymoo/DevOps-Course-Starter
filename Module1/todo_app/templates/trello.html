@@ -2,10 +2,12 @@
 {% block title %}To-Do App{% endblock %}
 
 {% block content %}
+<!--  
   <div class="jumbotron">
     <h1 class="display-8">To-Do App</h1>
     <p class="lead">Just another to-do app.</p>
   </div>
+  -->
 
   <div class="row">
     <div class="col-md-12">
@@ -17,6 +19,10 @@
           <br><br>
           <label for="description">New CARD descr: </label>
           <textarea id="description" name="card_description" placeholder="CARD description" rows="2"> </textarea> </textarea><br><br>
+          <label for="card_due_date">Enter due date for card:</label>
+          <input id="card_due_date" type="datetime-local" name="card_due_date" />
+          <br>
+          <br>
           <button type="submit">Add Item</button>
           <br>
         </form>
@@ -35,17 +41,18 @@
             <th>DOING [ {{ BOARD_LIST['Doing']}} ]</th>
             <th>DONE [ {{ BOARD_LIST['Done']}} ]</th>
           </tr>
-          {% for item in card_items %}
+          {% for item in view_model.items %}
             <tr>
                 <td>
                     {% if BOARD_LIST['To Do'] in item['ListID'] %}
                         <form action="{{ url_for('move_the_card') }}" method="post" >
                             <input type="hidden" name="card_id_value" value="{{ item['ID'] }}">
-                            {{ item['name']  }} <a href="{{ url_for('edit_the_card', card_name=item['name'], card_id=item['ID'])  }} style=right">Edit Card Desc</a>
-                            <br> {{ item['DESC'] }}
-                            <br> {{ item['ID'] }}
-                            <br>
-                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Doing']}}">Move to Doing</button>
+                            <ul>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
+                              <li>{{ item['DESC'] }}</li>
+                              <li>{{ item['due'] }}</li>
+                            </ul>
+                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Doing']}}" style="float: right;">Move to Doing</button>
                         </form>
                     {% endif %}
                 </td>
@@ -53,23 +60,25 @@
                     {% if BOARD_LIST['Doing'] in item['ListID'] %}
                         <form action="{{ url_for('move_the_card') }}" method="post" >
                             <input type="hidden" name="card_id_value" value="{{ item['ID'] }}"> 
-                            {{ item['name']  }} <a href="{{ url_for('edit_the_card', card_name=item['name'], card_id=item['ID'])  }} style=right">Edit Card Desc</a>
-                            <br> {{ item['DESC'] }} 
-                            <br> {{ item['ID'] }}
-                            <br>
-                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['To Do']}}">Move back to To-Do</button>
-                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Done']}}">Move to DONE</button>      
+                            <ul>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
+                              <li>{{ item['DESC'] }}</li>
+                              <li>{{ item['due'] }}</li>
+                            </ul>
+                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['To Do']}}" style="float: left;">Move back to To-Do</button>
+                            <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Done']}}" style="float: right;">Move to DONE</button>      
                         </form>
                     {% endif %}
-                </td>   
+                </td> 
                 <td>
                     {% if BOARD_LIST['Done'] in item['ListID'] %}
                         <form action="{{ url_for('move_the_card') }}" method="post" >
-                            <input type="hidden" name="card_id_value" value="{{ item['ID'] }}"> 
-                            {{ item['name']  }} <a href="{{ url_for('edit_the_card', card_name=item['name'], card_id=item['ID'])  }} style=right">Edit Card Desc</a>
-                            <br> {{ item['DESC'] }}
-                            <br> {{ item['ID'] }} 
-                            <br>
+                            <input type="hidden" name="card_id_value" value="{{ item['ID'] }}">
+                            <ul>
+                              <li>{{ item['name'] }} <a href="{{ url_for('edit_the_card', card_id=item['ID'], card_name=item['name']) }}" style="float: right;">Edit Card</a></li>
+                              <li>{{ item['DESC'] }}</li>
+                              <li>{{ item['due'] }}</li>
+                            </ul>
                             <button type="submit" name="list_id_value" value="{{ BOARD_LIST['Doing'] }}">Move BACK to Doing</button>
                     {% endif %}
                 </td>
