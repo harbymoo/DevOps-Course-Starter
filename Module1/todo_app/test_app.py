@@ -6,15 +6,18 @@ import pytest
 import requests
 
 @pytest.fixture
-def client():
+def client(monkeypatch: pytest.MonkeyPatch):
     # Use our test integration config instead of the 'real' version
     file_path = find_dotenv('.env.test')
     load_dotenv(file_path, override=True)
+    
+    monkeypatch.setattr(requests, 'get', stub)
 
     # Create the new app.
     test_app = app.create_app()
 
-    # Use the app to create a test_client that can be used in our tests.
+    # Use the app to create a tes
+    # t_client that can be used in our tests.
     with test_app.test_client() as client:
         yield client
 
@@ -30,21 +33,49 @@ def stub(url, params={}, headers=None):
     print(test_board_id)
     fake_response_data = None
 
+    if url == f'https://api.trello.com/1/boards/{test_board_id}/lists':
+        fake_response_data = [
+            { 'name': 'To Do', 'id': '654321' },
+            { 'name': 'Doing', 'id': '765432' },
+            { 'name': 'Done',  'id': '876543' }
+        ]
+        
+        return StubResponse(fake_response_data)
+
+
     if url == f'https://api.trello.com/1/boards/{test_board_id}/cards':
         fake_response_data = [{
             'name': 'To Do',
-            'DESC': '',
-            'ID': '123abc',
+            'desc': '',
+            'id': '123abc',
             'due': '',
-            'ListID': '1234567',     
+            'idList': '654321',     
             'cards': [{'name': 'card1', 'DESC': "", 'ID': '12345', 'due': '', 'ListID': '654321'}]
-        }]
+            },
+        {
+            'name': 'Doing',
+            'desc': '',
+            'id': '123edf',
+            'due': '',
+            'idList': '765432',     
+            'cards': [{'name': 'card2', 'DESC': "", 'ID': '23456', 'due': '', 'ListID': '765432'}]
+            },
+        {
+            'name': 'Done',
+            'desc': '',
+            'id': '123ghi',
+            'due': '',
+            'idList': '876543',     
+            'cards': [{'name': 'card3', 'DESC': "", 'ID': '34567', 'due': '', 'ListID': '876543'}]
+            }
+        ]
+        
         return StubResponse(fake_response_data)
 
     raise Exception(f'Integration test did not expect URL "{url}"')
 
 def test_flask_app_homepage(monkeypatch: pytest.MonkeyPatch, client: FlaskClient):
-    monkeypatch.setattr(requests, 'request', stub)
+    
     # Arrange
     # Add test data
 

@@ -38,7 +38,6 @@ cards = response.json()
 
 for item in cards:
     print(f"Name: {item['name']} ID: {item['id']} ListID: {item['idList']}")
-
   
 list_cards = []
 
