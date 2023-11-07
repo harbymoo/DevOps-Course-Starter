@@ -65,14 +65,28 @@ class MYTRELLO():
         list_cards = []
 
         for item in the_cards:
+            print(item)
+            print(f"Keys in item: {item.keys()}")
             print(f"{item['due']} and {type(item['due'])}")
             if item['due'] is not None:
                 print(f"ok {item['due']}")
-                due_temp = datetime.fromisoformat(item['due'])
-                due_date = due_temp.strftime("%Y-%m-%d %H:%M:%S")
+                if item['due']:
+                    ## due_temp = datetime.fromisoformat(item['due'])
+                    due_temp = item['due'][:-1]
+                    print(f"DUE_TEMP = {due_temp}")
+                    due_date = datetime.strptime(due_temp, "%Y-%m-%dT%H:%M:%S.%f")
+                # due_date = due_temp.strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    due_date = None
             else:
-                due_date = 'No Due Date Set'
-            temp_dict = {"name": item['name'], "DESC": item['desc'], "ID": item['id'], "due": due_date, "ListID": item['idList']}
+                due_date = None
+            temp_dict = {
+                "name": item['name'],
+                "DESC": item['desc'],
+                "ID": item['id'], 
+                "due": due_date, 
+                "ListID": item['idList']
+            }
             list_cards.append(temp_dict)
 
         return list_cards
