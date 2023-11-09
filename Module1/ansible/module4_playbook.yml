@@ -18,10 +18,26 @@
       - git
       - python311
 
-    POETRY_BIN: /home/ec2-user/.local/bin/poetry
+    POETRY_USER: todoapp
+    POETRY_GROUP: ec2-user
+    POETRY_BIN: /home/todoapp/.local/bin/poetry
 
   # Task: the list of tasks executed within the play
   tasks:
+
+    # create the todoapp user
+    - name: create user todoapp
+      user:
+        name: "{{ POETRY_USER }}"
+        comment: APP user
+        shell: /bin/bash
+        group: "{{ POETRY_GROUP }}"
+      become: yes
+      register: useradd_output
+
+    - name: debug for user
+      debug:
+        var: useradd_output
 
     # installation of packages
     - name: package installation
@@ -40,19 +56,12 @@
       shell: |
         curl -sSL https://install.python-poetry.org | python3 -
       register: poetry_install_output
+      become: true
+      become_user: "{{ POETRY_USER }}"
 
     - name: debug
       debug:
         msg: "{{ poetry_install_output }}"
-
-    - name: run command
-      shell: |
-        which poetry
-      register: which_poetry_output
-
-    - name: output which
-      debug:
-        var: which_poetry_output
 
     # create directory
     - name: create directory
@@ -75,7 +84,7 @@
         repo: https://github.com/harbymoo/DevOps-Course-Starter.git
         dest: /opt/todoapp
         single_branch: yes
-        version: module4
+        version: main
         update: no
       register: git_output
 
@@ -88,6 +97,8 @@
       shell: |
         {{ POETRY_BIN }} install --directory=/opt/todoapp/Module1
       register: poetry_update_output
+      become: yes
+      become_user: "{{ POETRY_USER }}"
 
     - name: debug
       debug: 
@@ -114,6 +125,7 @@
         group: root
       become: yes
       register: service_copy_output
+      notify: restart todoapp
 
     - name: debug service
       debug:
@@ -123,13 +135,23 @@
       systemd:
         name: todoapp.service
         state: started
+        enabled: true
         daemon_reload: true
       become: yes
       register: todoapp_systemd_output
 
-    - name: debud systemd
+    - name: debug systemd
       debug:
         var: todoapp_systemd_output
+
+  handlers:
+
+    - name: restart todoapp
+      systemd:
+        name: todoapp.service
+        state: restarted
+        daemon_reload: true
+      become: yes
 
 
 # Three dots indicate the end of YAML
