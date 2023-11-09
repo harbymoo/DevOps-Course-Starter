@@ -87,6 +87,7 @@
         version: main
         update: no
       register: git_output
+      notify: update permissions
 
     - name: output git clone
       debug:
@@ -151,6 +152,16 @@
         name: todoapp.service
         state: restarted
         daemon_reload: true
+      become: yes
+
+    - name: update permissions
+      file:
+        path: /opt/todoapp
+        mode: '0755'
+        owner: ec2-user
+        group: ec2-user
+        state: directory
+        recurse: yes
       become: yes
 
 
