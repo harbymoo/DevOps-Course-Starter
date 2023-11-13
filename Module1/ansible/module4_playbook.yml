@@ -38,6 +38,7 @@
     - name: debug for user
       debug:
         var: useradd_output
+      tags: debug_output
 
     # installation of packages
     - name: package installation
@@ -50,6 +51,7 @@
     - name: debug
       debug:
         msg: "{{ yum_install_output }}"
+      tags: debug_output
 
     # install poetry
     - name: installation of poetry 
@@ -62,6 +64,7 @@
     - name: debug
       debug:
         msg: "{{ poetry_install_output }}"
+      tags: debug_output
 
     # create directory
     - name: create directory
@@ -77,6 +80,7 @@
     - name: dir output
       debug:
         msg: "{{ dir_todoapp_output }}"
+      tags: debug_output
 
     # git
     - name: Example clone of a single branch
@@ -92,6 +96,7 @@
     - name: output git clone
       debug:
         msg: "{{ git_output }}"
+      tags: debug_output
 
     # update the poetry
     - name: poetry update
@@ -104,6 +109,7 @@
     - name: debug
       debug: 
         msg: "{{ poetry_update_output }}"
+      tags: debug_output
 
     # create env file
     - name: Create .env from template
@@ -115,6 +121,7 @@
     - name: debug template
       debug:
         msg: "{{ template_output }}"
+      tags: debug_output
 
     # copy the service file
     - name: copy the service file
@@ -131,6 +138,7 @@
     - name: debug service
       debug:
         var: service_copy_output
+      tags: debug_output
 
     - name: systemd enable
       systemd:
@@ -144,6 +152,7 @@
     - name: debug systemd
       debug:
         var: todoapp_systemd_output
+      tags: debug_output
 
   handlers:
 

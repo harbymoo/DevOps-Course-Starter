@@ -105,7 +105,29 @@ To run the ansible playbook
 
 ```bash
 cd /home/ec2-user/DevOps-Course-Starter/Module1/ansible
+# To run the playbook with debug output
 /usr/local/bin/ansible-playbook module4_playbook.yml --ask-vault-pass
-```
+# Alternatively to run WITHOUT debug output
+/usr/local/bin/ansible-playbook module4_playbook.yml --ask-vault-pass --skip-tags debug_output
 
-follow the prompts and this will create the 
+follow the prompts and this will create what is needed to run the todoapp
+play #1 (module4): module4    TAGS: []
+  tasks:
+    create user todoapp       TAGS: []
+        debug for user    TAGS: [debug_output]
+    package installation      TAGS: []
+        debug     TAGS: [debug_output]
+    installation of poetry    TAGS: []
+        debug     TAGS: [debug_output]
+    create directory  TAGS: []
+        dir output        TAGS: [debug_output]
+    Example clone of a single branch  TAGS: []
+        output git clone  TAGS: [debug_output]
+    poetry update     TAGS: []
+        debug     TAGS: [debug_output]
+    Create .env from template TAGS: []
+        debug template    TAGS: [debug_output]
+    copy the service file     TAGS: []
+        debug service     TAGS: [debug_output]
+    systemd enable    TAGS: []
+        debug systemd     TAGS: [debug_output]
