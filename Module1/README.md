@@ -89,6 +89,7 @@ Deployment of the package will be carried out using ansible as a deliver mechani
 
 The following is the layout of the files:
 
+```bash
 DevOps-Course-Starter/Module1/ansible/
 ├── ansible.cfg
 ├── files
@@ -100,6 +101,7 @@ DevOps-Course-Starter/Module1/ansible/
 ├── teardown_playbook.yml
 └── templates
     └── env.j2
+```
 
 To run the ansible playbook 
 
