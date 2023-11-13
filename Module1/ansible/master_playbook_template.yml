@@ -1,0 +1,20 @@
+---
+# YAML documents begin with the document separator --
+#
+# The minus in YAML indicates a list item.
+# The playbook contains a list of plays, with each play being a dictionary
+#
+
+- 
+  # Target: where our plays run and the options to run as
+  hosts: module4
+  gather_facts: False
+
+  vars:
+
+  # Task: the list of tasks executed within the play
+  tasks:
+
+
+# Three dots indicate the end of YAML
+...

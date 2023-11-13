@@ -1,0 +1,98 @@
+---
+# YAML documents begin with the document separator --
+#
+# The minus in YAML indicates a list item.
+# The playbook contains a list of plays, with each play being a dictionary
+#
+
+- 
+  # Target: where our plays run and the options to run as
+  hosts: module4
+  gather_facts: False
+  become: true
+
+  vars:
+    packages:
+      - git
+      - python311
+
+  # Task: the list of tasks executed within the play
+  tasks:
+
+    # stop todo.app service
+    - name: check service is online and available
+      shell: |
+        systemctl is-active todoapp.service
+      register: service_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: output
+      debug:
+        var: service_status
+    
+    - name: stop ToDo service
+      systemd:
+        name: todoapp.service
+        state: stopped
+        enabled: no
+        daemon_reload: true
+      register: stop_todo_output
+      when: service_status.rc == 0
+
+    - name: output
+      debug:
+        var: stop_todo_output
+
+    # remove poetry
+    - name: uninstall poetry
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 - --uninstall
+      ignore_errors: true
+      register: poetry_install_output
+      become: yes
+      become_user: todoapp
+
+    - name: remove user todoapp
+      user:
+        name: todoapp
+        state: absent
+        remove: true
+      register: del_user_output
+
+    - name: debug
+      debug:
+        var: del_user_output
+
+    - name: remove file
+      file:
+        path: /etc/systemd/system/todoapp.service
+        state: absent
+      register: todo_file_rm_output
+
+    - name: output rm
+      debug:
+        var: todo_file_rm_output
+    
+    # remove the created directory
+    - name: remove directory
+      file:
+        path: /opt/todoapp
+        state: absent
+      register: dir_todoapp_output
+      become: yes
+
+    # uninstall packages
+    - name: package uninstall
+      yum:
+        name: "{{ packages }}"
+        state: absent
+      register: yum_install_output
+      become: yes
+
+    - name: debug
+      debug:
+        msg: "{{ yum_install_output }}"
+
+# Three dots indicate the end of YAML
+...

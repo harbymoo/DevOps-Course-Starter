@@ -1,0 +1,178 @@
+---
+# YAML documents begin with the document separator --
+#
+# The minus in YAML indicates a list item.
+# The playbook contains a list of plays, with each play being a dictionary
+#
+
+- 
+  # Target: where our plays run and the options to run as
+  hosts: module4
+  gather_facts: false
+
+  vars_files:
+    - "secrets.yml"
+
+  vars:
+    packages:
+      - git
+      - python311
+
+    POETRY_USER: todoapp
+    POETRY_GROUP: ec2-user
+    POETRY_BIN: /home/{{ POETRY_USER }}/.local/bin/poetry
+
+  # Task: the list of tasks executed within the play
+  tasks:
+
+    # create the todoapp user
+    - name: create user todoapp
+      user:
+        name: "{{ POETRY_USER }}"
+        comment: APP user
+        shell: /bin/bash
+        group: "{{ POETRY_GROUP }}"
+      become: yes
+      register: useradd_output
+
+    - name: debug for user
+      debug:
+        var: useradd_output
+      tags: debug_output
+
+    # installation of packages
+    - name: package installation
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      register: yum_install_output
+      become: yes
+
+    - name: debug
+      debug:
+        msg: "{{ yum_install_output }}"
+      tags: debug_output
+
+    # install poetry
+    - name: installation of poetry 
+      shell: |
+        curl -sSL https://install.python-poetry.org | python3 -
+      register: poetry_install_output
+      become: true
+      become_user: "{{ POETRY_USER }}"
+
+    - name: debug
+      debug:
+        msg: "{{ poetry_install_output }}"
+      tags: debug_output
+
+    # create directory
+    - name: create directory
+      file:
+        path: /opt/todoapp
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+        state: directory
+      register: dir_todoapp_output
+      become: yes
+
+    - name: dir output
+      debug:
+        msg: "{{ dir_todoapp_output }}"
+      tags: debug_output
+
+    # git
+    - name: Example clone of a single branch
+      git:
+        repo: https://github.com/harbymoo/DevOps-Course-Starter.git
+        dest: /opt/todoapp
+        single_branch: yes
+        version: main
+        update: no
+      register: git_output
+      notify: update permissions
+
+    - name: output git clone
+      debug:
+        msg: "{{ git_output }}"
+      tags: debug_output
+
+    # update the poetry
+    - name: poetry update
+      shell: |
+        {{ POETRY_BIN }} install --directory=/opt/todoapp/Module1
+      register: poetry_update_output
+      become: yes
+      become_user: "{{ POETRY_USER }}"
+
+    - name: debug
+      debug: 
+        msg: "{{ poetry_update_output }}"
+      tags: debug_output
+
+    # create env file
+    - name: Create .env from template
+      template:
+        src: templates/env.j2
+        dest: /opt/todoapp/Module1/.env
+      register: template_output
+
+    - name: debug template
+      debug:
+        msg: "{{ template_output }}"
+      tags: debug_output
+
+    # copy the service file
+    - name: copy the service file
+      copy:
+        src: files/todoapp.service
+        dest: /etc/systemd/system/todoapp.service
+        mode: '0644'
+        owner: root
+        group: root
+      become: yes
+      register: service_copy_output
+      notify: restart todoapp
+
+    - name: debug service
+      debug:
+        var: service_copy_output
+      tags: debug_output
+
+    - name: systemd enable
+      systemd:
+        name: todoapp.service
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: yes
+      register: todoapp_systemd_output
+
+    - name: debug systemd
+      debug:
+        var: todoapp_systemd_output
+      tags: debug_output
+
+  handlers:
+
+    - name: restart todoapp
+      systemd:
+        name: todoapp.service
+        state: restarted
+        daemon_reload: true
+      become: yes
+
+    - name: update permissions
+      file:
+        path: /opt/todoapp
+        mode: '0755'
+        owner: ec2-user
+        group: ec2-user
+        state: directory
+        recurse: yes
+      become: yes
+
+
+# Three dots indicate the end of YAML
+...
