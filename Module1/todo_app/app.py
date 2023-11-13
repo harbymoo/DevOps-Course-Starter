@@ -6,25 +6,27 @@ from todo_app.flask_config import Config
 from todo_app.data.session_items import get_items, add_item, save_item
 from todo_app.data.trello_items import *
 
-API_KEY = os.getenv('API_KEY')
-API_TOKEN = os.getenv('API_TOKEN')
-BOARD_NAME = os.getenv('BOARD_NAME')
-
-trello_instance = MYTRELLO(API_KEY, API_TOKEN)
-BOARD_LIST = trello_instance.lists_on_board()
 """ 
 app = Flask(__name__)
 app.config.from_object(Config())
  """
 
 def create_app() -> Flask:
+
+    API_KEY = os.getenv('API_KEY')
+    API_TOKEN = os.getenv('API_TOKEN')
+    BOARD_NAME = os.getenv('BOARD_NAME')
+
+    trello_instance = MYTRELLO(API_KEY, API_TOKEN)
+    BOARD_LIST = trello_instance.lists_on_board()
+
     app = Flask(__name__)
     app.config.from_object(Config())
 
     @app.route('/',methods = ['POST', 'GET'])
     def index():
 
-        # BOARD_LIST = trello_instance.lists_on_board()
+        BOARD_LIST = trello_instance.lists_on_board()
         dictionary_items = trello_instance.get_cards()
 
         card_items: list[Item] = []
@@ -38,15 +40,9 @@ def create_app() -> Flask:
 
         return render_template('trello.html', view_model = view_model, BOARD_LIST = BOARD_LIST)  
 
-    @app.route('/trello_list', methods=['GET'])
-    def cards_list():
-    
-        # BOARD_LIST = trello_instance.lists_on_board()
-        card_items = trello_instance.get_cards()
-        return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)  
-
     @app.route('/trello_list', methods=['POST', 'GET'])
     def new_card_submit():
+
         if request.method == "POST": 
             card_name = request.form.get("card_title")
             card_desc = request.form.get("card_description")
@@ -54,22 +50,21 @@ def create_app() -> Flask:
 
         if card_name: 
             trello_instance.new_card(card_name, BOARD_LIST['To Do'], card_due_date, card_desc)
-            card_items = trello_instance.get_cards()
-            return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
+            return redirect('/')
         else:
-            card_items = trello_instance.get_cards()
-            return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
+            return redirect('/')
 
     @app.route('/move_the_card', methods=['POST', 'GET'])
     def move_the_card():
+
         if request.method == "POST":
             card_id = request.form.get("card_id_value")
             list_id = request.form.get("list_id_value")
     
         # BOARD_LIST = trello_instance.lists_on_board()
         trello_instance.move_cards(card_id, list_id)
-        card_items = trello_instance.get_cards()
-        return render_template('trello.html', card_items = card_items, BOARD_LIST = BOARD_LIST)
+        return redirect('/')
+
 
     @app.route('/edit_the_card/<card_name>/<card_id>', methods=['POST', 'GET'])
     def edit_the_card(card_id, card_name):
@@ -84,7 +79,7 @@ def create_app() -> Flask:
             new_card_desc = request.form.get('card_edit_desc')
             trello_instance.modify_card(card_id, new_card_desc)
 
-            return redirect(url_for('cards_list'))
+            return redirect('/')
             
         return render_template('edit.html', card = f_card, card_id = card_id, card_name = card_name)
 
