@@ -80,3 +80,32 @@ Use the following to run specific test: e.g.
 ```powershell
 $ poetry.exe run pytest -s  .\todo_app\test_app.py
 ```
+
+## ANSIBLE
+
+
+
+Deployment of the package will be carried out using ansible as a deliver mechanism
+
+The following is the layout of the files:
+
+DevOps-Course-Starter/Module1/ansible/
+├── ansible.cfg
+├── files
+│   └── todoapp.service
+├── hosts
+├── master_playbook_template.yml
+├── module4_playbook.yml
+├── secrets.yml
+├── teardown_playbook.yml
+└── templates
+    └── env.j2
+
+To run the ansible playbook 
+
+```bash
+cd /home/ec2-user/DevOps-Course-Starter/Module1/ansible
+/usr/local/bin/ansible-playbook module4_playbook.yml --ask-vault-pass
+```
+
+follow the prompts and this will create the 

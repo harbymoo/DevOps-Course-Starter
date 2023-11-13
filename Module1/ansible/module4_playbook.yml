@@ -8,7 +8,7 @@
 - 
   # Target: where our plays run and the options to run as
   hosts: module4
-  gather_facts: False
+  gather_facts: false
 
   vars_files:
     - "secrets.yml"
@@ -20,7 +20,7 @@
 
     POETRY_USER: todoapp
     POETRY_GROUP: ec2-user
-    POETRY_BIN: /home/todoapp/.local/bin/poetry
+    POETRY_BIN: /home/{{ POETRY_USER }}/.local/bin/poetry
 
   # Task: the list of tasks executed within the play
   tasks:

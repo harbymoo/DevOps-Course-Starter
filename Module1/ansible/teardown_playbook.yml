@@ -20,6 +20,17 @@
   tasks:
 
     # stop todo.app service
+    - name: check service is online and available
+      shell: |
+        systemctl is-active todoapp.service
+      register: service_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: output
+      debug:
+        var: service_status
+    
     - name: stop ToDo service
       systemd:
         name: todoapp.service
@@ -27,6 +38,7 @@
         enabled: no
         daemon_reload: true
       register: stop_todo_output
+      when: service_status.rc == 0
 
     - name: output
       debug:
