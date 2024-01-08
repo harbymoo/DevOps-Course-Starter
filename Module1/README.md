@@ -80,3 +80,49 @@ Use the following to run specific test: e.g.
 ```powershell
 $ poetry.exe run pytest -s  .\todo_app\test_app.py
 ```
+
+## DOCKER
+
+The application now resides as a container with to instances that can be run
+
+    - module5_todo:dev
+    - module5_todo:prod
+
+To build the containers you will need to build out the instances
+
+DEV instance
+```bash
+$ docker build --target development --tag module5_todo:dev . --progress plain --no-cache
+```
+PROD instance
+```bash
+$ docker build --target production --tag todo-app:prod . --progress plain --no-cache
+```
+
+To start the application providing you have docker desktop installed run the following 
+
+DEV instance
+```bash
+$ docker run --env-file ./.env -p 5000:5000 module5_todo:dev
+```
+PROD instance
+```bash
+$ docker run --env-file ./.env -p 5000:5000 module5_todo:prod
+```
+accessed as http://127.0.0.1:5000/
+
+There is a means to run the following using docker-compose and two files have been provided 
+
+    - DEV
+        - todo_dev.yaml
+    - PROD
+        - todo_prod.yaml
+
+DEV instance
+```bash
+$ docker-compose -f .\todo_dev.yaml up 
+```
+PROD instance
+```bash
+$ docker-compose -f .\todo_prod.yaml up 
+```

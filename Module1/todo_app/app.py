@@ -113,9 +113,11 @@ def create_app() -> Flask:
 
             if confirmation == 'yes':
                 trello_instance.delete_card(delete_id_value)
-                return redirect(url_for('cards_list'))
+                # return redirect(url_for('cards_list'))
+                return redirect('/')
             else:
-                return redirect(url_for('cards_list'))
+                return redirect('/')
+                # return redirect(url_for('cards_list'))
             
         return render_template('delete_confirm.html', card = f_card, confirmation = confirmation )
     
