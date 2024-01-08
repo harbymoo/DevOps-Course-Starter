@@ -7,8 +7,6 @@
 ARG PYTHON_VERSION=3.11.4
 FROM python:${PYTHON_VERSION}-slim as base
 
-FROM base as development
-
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -26,6 +24,8 @@ ENV PATH="/root/.local/bin:/app/.local/bin:$PATH"
 
 # RUN poetry install --no-interaction --no-ansi
 RUN poetry update && poetry install
+
+FROM base as development
 
 # Expose the port that the application listens on.
 EXPOSE 5000
