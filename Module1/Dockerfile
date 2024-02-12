@@ -25,14 +25,15 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:/app/.local/bin:$PATH"
 
 # RUN poetry install --no-interaction --no-ansi
-RUN poetry update && poetry install
+# RUN poetry update && poetry install
+RUN poetry install
 
 # Expose the port that the application listens on.
 EXPOSE 5000
 
 # Run the application.
 # CMD poetry run gunicorn --bind 0.0.0.0 "app:create_app()"
-ENTRYPOINT [ "poetry", "run", "gunicorn", "--bind", "0.0.0.0:5000", "todo_app.app:create_app()" ]
+ENTRYPOINT [ "poetry", "run", "--bind", "0.0.0.0:5000", "todo_app.app:create_app()" ]
 
 FROM base as production
 
