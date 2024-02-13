@@ -7,8 +7,6 @@
 ARG PYTHON_VERSION=3.11.4
 FROM python:${PYTHON_VERSION}-slim as base
 
-FROM base as development
-
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -28,12 +26,18 @@ ENV PATH="/root/.local/bin:/app/.local/bin:$PATH"
 # RUN poetry update && poetry install
 RUN poetry install
 
+FROM base as development
+
 # Expose the port that the application listens on.
 EXPOSE 5000
 
 # Run the application.
 # CMD poetry run gunicorn --bind 0.0.0.0 "app:create_app()"
+<<<<<<< HEAD
 ENTRYPOINT [ "poetry", "run", "--bind", "0.0.0.0:5000", "todo_app.app:create_app()" ]
+=======
+ENTRYPOINT [ "poetry", "run", "flask", "run", "--host", "0.0.0.0"]
+>>>>>>> a913308a02c231a8ad2a6ffa1b5e6f9747920dd3
 
 FROM base as production
 

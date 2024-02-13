@@ -92,7 +92,7 @@ To build the containers you will need to build out the instances
 
 DEV instance
 ```bash
-$ docker build --target development --tag todo-app:dev . --progress plain --no-cache
+$ docker build --target development --tag module5_todo:dev . --progress plain --no-cache
 ```
 PROD instance
 ```bash
